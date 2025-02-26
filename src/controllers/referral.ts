@@ -9,23 +9,23 @@ import nodemailer from 'nodemailer';
 import { google } from 'googleapis';
 
 async function createReferral(req:Request , res:Response):Promise<any> {
-    const { referrerName, referrerEmail, referredName, referredEmail, courseId, courseName } = req.body;
-    if (!referrerName || !referrerEmail || !referredName || !referredEmail || !courseId) {
+    const { referrerName, referrerEmail, refereeName, refereeEmail, courseId, courseName } = req.body;
+    if (!referrerName || !referrerEmail || !refereeName || !refereeEmail || !courseId || !courseName) {
         return res.status(400).json({ error: 'All fields are required' });
     }
     try {
         const referral = await prisma.referral.create({
           data: {
+            refereeName,
+            refereeEmail,
             referrerName,
             referrerEmail,
-            referredName,
-            referredEmail,
             courseId
           },
         });
   
         // Send email notification
-        await sendReferralEmail(process.env.COMPANY_EMAIL || "", referrerName, referredEmail, courseName);
+        await sendReferralEmail(process.env.COMPANY_EMAIL || "", referrerName, refereeEmail, courseName);
   
         res.status(201).json(referral);
       } catch (error) {
@@ -34,7 +34,7 @@ async function createReferral(req:Request , res:Response):Promise<any> {
       }
     };
 
-async function sendReferralEmail(companyEmail: string, referrerName: string, referredEmail: string, courseName: string):Promise<any>  {
+async function sendReferralEmail(companyEmail: string, referrerName: string, refereeEmail: string, courseName: string):Promise<any>  {
         try {
           const oAuth2Client = new google.auth.OAuth2(
             process.env.CLIENT_ID,
@@ -59,14 +59,9 @@ async function sendReferralEmail(companyEmail: string, referrerName: string, ref
     
           const mailOptions = {
             from: companyEmail,
-            to: referredEmail,
+            to: refereeEmail,
             subject: `Referral for ${courseName}`,
-            text: `Hello,
-    
-            ${referrerName} has referred you to the course "${courseName}". You can enroll here: [Enrollment Link]
-    
-            Best regards,
-            Your Course Team`,
+            text: `Hello,\n${referrerName} has referred you to the course "${courseName}". You can enroll here: [Enrollment Link]\nBest regards,\nYour Course Team`,
           };
     
           await transporter.sendMail(mailOptions);

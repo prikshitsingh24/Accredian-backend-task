@@ -28,8 +28,8 @@ model Referral{
   referralId      String      @id @default(uuid())
   referrerName    String
   referrerEmail   String
-  referredName    String
-  referredEmail   String
+  refereeName     String
+  refereeEmail    String
   createdAt       DateTime @default(now())
   courseId        String
 

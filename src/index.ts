@@ -1,14 +1,13 @@
-import bodyParser from 'body-parser';
 import express, { Request, Response } from 'express';
 import dotenv from 'dotenv';
 import referralRouter from './routes/referral';
 import courseRouter from './routes/course';
+import cors from 'cors'; 
 const app = express();
 const port = 3000;
 dotenv.config();
-
+app.use(cors());
 app.use(express.json());
-app.use(bodyParser.json());
 app.use('/api/referral',referralRouter)
 app.use('/api/course',courseRouter)
 
