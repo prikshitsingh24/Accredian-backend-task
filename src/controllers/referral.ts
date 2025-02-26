@@ -8,12 +8,31 @@ const prisma = new PrismaClient()
 import nodemailer from 'nodemailer';
 import { google } from 'googleapis';
 
+async function checkReferral(referrerEmail: string, refereeEmail: string, courseId:string) {
+  const existingReferral = await prisma.referral.findFirst({
+    where: {
+      referrerEmail: referrerEmail,
+      refereeEmail: refereeEmail,
+      courseId: courseId,
+    },
+  });
+
+  return existingReferral;
+}
+
+
+
 async function createReferral(req:Request , res:Response):Promise<any> {
     const { referrerName, referrerEmail, refereeName, refereeEmail, courseId, courseName } = req.body;
     if (!referrerName || !referrerEmail || !refereeName || !refereeEmail || !courseId || !courseName) {
         return res.status(400).json({ error: 'All fields are required' });
     }
     try {
+        const existingReferral = await checkReferral(referrerEmail, refereeEmail, courseId);
+        if (existingReferral) {
+          return res.status(400).json({ error: 'Referral already sent for this course.' });
+        }
+    
         const referral = await prisma.referral.create({
           data: {
             refereeName,
