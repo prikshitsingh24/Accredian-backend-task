@@ -7,7 +7,7 @@ const app = express();
 const port = 3000;
 dotenv.config();
 app.use(cors({
-  origin: ["https://accredian-frontend-ch5lgfuvf-prikshit-singhs-projects.vercel.app/"],
+  origin: [process.env.FRONTEND_URL || ""],
   methods: ['GET', 'POST']
 }));
 app.use(express.json());
