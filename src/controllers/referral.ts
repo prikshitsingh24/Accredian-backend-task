@@ -30,7 +30,7 @@ async function createReferral(req:Request , res:Response):Promise<any> {
     try {
         const existingReferral = await checkReferral(referrerEmail, refereeEmail, courseId);
         if (existingReferral) {
-          return res.status(400).json({ error: 'Referral already sent for this course.' });
+          return res.status(400)
         }
     
         const referral = await prisma.referral.create({
