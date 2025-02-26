@@ -3,22 +3,28 @@ import { Request, Response } from 'express';
 import dotenv from 'dotenv';
 dotenv.config();
 
-const prisma = new PrismaClient()
+const prisma = new PrismaClient();
+
 
 import nodemailer from 'nodemailer';
 import { google } from 'googleapis';
 
-async function checkReferral(referrerEmail: string, refereeEmail: string, courseId:string) {
-  const existingReferral = await prisma.referral.findFirst({
-    where: {
-      referrerEmail: referrerEmail,
-      refereeEmail: refereeEmail,
-      courseId: courseId,
-    },
-  });
-
-  return existingReferral;
+async function checkReferral(referrerEmail: string, refereeEmail: string, courseId: string) {
+  try {
+    const existingReferral = await prisma.referral.findFirst({
+      where: {
+        referrerEmail: referrerEmail,
+        refereeEmail: refereeEmail,
+        courseId:courseId
+      },
+    });
+    return existingReferral;
+  } catch (error) {
+    console.error('Error checking referral:', error);
+    throw new Error('Error checking referral');
+  }
 }
+
 
 
 
@@ -30,7 +36,7 @@ async function createReferral(req:Request , res:Response):Promise<any> {
     try {
         const existingReferral = await checkReferral(referrerEmail, refereeEmail, courseId);
         if (existingReferral) {
-          return res.status(400)
+          return res.status(400).json({})
         }
     
         const referral = await prisma.referral.create({
