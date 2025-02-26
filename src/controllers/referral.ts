@@ -61,7 +61,7 @@ async function sendReferralEmail(companyEmail: string, referrerName: string, ref
             from: companyEmail,
             to: refereeEmail,
             subject: `Referral for ${courseName}`,
-            text: `Hello,\n${referrerName} has referred you to the course "${courseName}". You can enroll here: [Enrollment Link]\nBest regards,\nYour Course Team`,
+            text: `Hello,\n${referrerName} has referred you to the course "${courseName}". You can enroll here: [Enrollment Link]\nBest regards,\nAccredian`,
           };
     
           await transporter.sendMail(mailOptions);
