@@ -6,7 +6,10 @@ import cors from 'cors';
 const app = express();
 const port = 3000;
 dotenv.config();
-app.use(cors());
+app.use(cors({
+  origin: ["https://accredian-frontend-ch5lgfuvf-prikshit-singhs-projects.vercel.app/"],
+  methods: ['GET', 'POST']
+}));
 app.use(express.json());
 app.use('/api/referral',referralRouter)
 app.use('/api/course',courseRouter)
